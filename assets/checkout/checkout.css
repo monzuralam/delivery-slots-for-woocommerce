@@ -1,0 +1,57 @@
+.dsw-delivery-slot {
+	margin: 24px 0;
+	padding-top: 24px;
+	border-top: 1px solid rgba(0, 0, 0, 0.11);
+}
+.dsw-delivery-slot h3 {
+	margin: 0 0 8px;
+	font-size: 1em;
+}
+.dsw-slot-fields {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+.dsw-slot-field {
+	flex: 1 1 220px;
+	min-width: 0;
+}
+.dsw-slot-select {
+	width: 100%;
+}
+.dsw-slot-select:disabled {
+	opacity: 0.6;
+}
+.dsw-slot-status {
+	display: block;
+	margin-top: 6px;
+	color: #b32d2e;
+	font-size: 0.9em;
+}
+.dsw-blocks-slot-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+}
+.dsw-blocks-slot-col {
+	flex: 1 1 220px;
+	min-width: 0;
+}
+.dsw-blocks-slot-field label {
+	display: block;
+	font-weight: 600;
+	margin-bottom: 4px;
+}
+.dsw-blocks-slot-field select {
+	width: 100%;
+	padding: 8px;
+}
+.dsw-blocks-slot-field select:disabled {
+	opacity: 0.6;
+}
+.dsw-blocks-slot-field .dsw-blocks-status {
+	display: block;
+	margin-top: 6px;
+	color: #b32d2e;
+	font-size: 0.9em;
+}

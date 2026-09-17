@@ -1,0 +1,22 @@
+{
+    "name": "monzuralam/delivery-slots-for-woocommerce",
+    "description": "A simple WordPress React Starter Plugin for WordPress.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-later",
+    "autoload": {
+        "psr-4": {
+            "DSW\\": "includes/"
+        },
+        "files": [
+            "includes/functions.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "monzuralam",
+            "email": "monzur484@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}

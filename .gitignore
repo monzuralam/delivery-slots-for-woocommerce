@@ -1,0 +1,10 @@
+*.log
+.DS_Store
+*.DS_Stor
+composer.lock
+package-lock.json
+/.htaccess
+/license.txt
+/build
+/node_modules
+/vendor

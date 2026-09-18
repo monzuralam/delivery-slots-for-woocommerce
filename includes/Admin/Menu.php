@@ -23,7 +23,9 @@ class Menu
             array(
 				$this,
 				'render_admin_page'
-            )
+            ),
+			'dashicons-calendar-alt',
+			59
         );
 
         add_submenu_page(

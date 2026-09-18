@@ -1,3 +1,5 @@
+import { checkSlotConflict } from './api';
+
 function getSwal() {
     if (typeof window === 'undefined' || !window.Swal) {
         throw new Error('SweetAlert2 is not loaded.');
@@ -115,7 +117,7 @@ export async function openSlotForm(slot) {
         didOpen: () => {
             document.getElementById('dsw-slot-date').focus();
         },
-        preConfirm: () => {
+        preConfirm: async () => {
             const data = {
                 slot_date: document.getElementById('dsw-slot-date').value,
                 start_time: document.getElementById('dsw-start-time').value,
@@ -136,6 +138,22 @@ export async function openSlotForm(slot) {
 
             if (error) {
                 Swal.showValidationMessage(error);
+                return false;
+            }
+
+            try {
+                const conflict = await checkSlotConflict({
+                    slotDate: data.slot_date,
+                    startTime: data.start_time,
+                    excludeId: slot?.id,
+                });
+
+                if (conflict) {
+                    Swal.showValidationMessage('A slot already exists for this date and time.');
+                    return false;
+                }
+            } catch (err) {
+                Swal.showValidationMessage(err.message);
                 return false;
             }
 

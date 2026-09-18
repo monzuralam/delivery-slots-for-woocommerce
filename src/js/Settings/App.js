@@ -12,7 +12,7 @@ const TABS = [
 ];
 
 function App() {
-    const [activeTab, setActiveTab] = useState('general');
+    const [activeTab, setActiveTab] = useState( localStorage.getItem('dsw_settings_active_tab') || 'general');
 
     return (
         <SettingsProvider>
@@ -31,7 +31,10 @@ function App() {
                                         type="button"
                                         key={tab.id}
                                         className={`dsw-sidebar__item${isActive ? ' dsw-sidebar__item--active' : ''}`}
-                                        onClick={() => setActiveTab(tab.id)}
+                                        onClick={() => {
+                                            setActiveTab(tab.id);
+                                            localStorage.setItem('dsw_settings_active_tab', tab.id);
+                                        }}
                                     >
                                         <Icon size={16} />
                                         {tab.label}

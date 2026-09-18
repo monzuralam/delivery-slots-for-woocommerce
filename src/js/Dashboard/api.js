@@ -74,3 +74,13 @@ export function deleteSlot(id) {
 export function fetchSlotOrders(id) {
     return request(`slots/${id}/orders`);
 }
+
+export async function checkSlotConflict({ slotDate, startTime, excludeId }) {
+    const params = new URLSearchParams({ slot_date: slotDate, start_time: startTime });
+
+    if (excludeId) params.set('exclude_id', excludeId);
+
+    const data = await request(`slots/check-conflict?${params.toString()}`);
+
+    return Boolean(data && data.conflict);
+}

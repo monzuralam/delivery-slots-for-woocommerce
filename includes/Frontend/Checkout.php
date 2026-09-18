@@ -379,13 +379,13 @@ class Checkout
     private function reserve_slot_for_order($order, $slot_id)
     {
         if (! $slot_id) {
-            throw new \WC_Data_Exception('dsw_slot_required', __('Please select a delivery slot before placing your order.', 'delivery-slots-for-woocommerce'));
+            throw new \WC_Data_Exception('dsw_slot_required', esc_html__('Please select a delivery slot before placing your order.', 'delivery-slots-for-woocommerce'));
         }
 
         $result = SlotManager::reserve_slot($slot_id, $order->get_id());
 
         if (is_wp_error($result)) {
-            throw new \WC_Data_Exception('dsw_slot_reserve_failed', $result->get_error_message());
+            throw new \WC_Data_Exception('dsw_slot_reserve_failed', esc_html($result->get_error_message()));
         }
 
         $slot = SlotManager::get_slot($slot_id);

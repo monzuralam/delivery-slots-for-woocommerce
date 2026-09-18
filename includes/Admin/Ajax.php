@@ -32,8 +32,9 @@ class Ajax
         $this->check_access();
 
         $data = [
-            'enable_dsw' => ! empty($_POST['enable_dsw']),
-            'auto_save'  => ! empty($_POST['auto_save']),
+            'enable_dsw'               => ! empty($_POST['enable_dsw']),
+            'auto_save'                => ! empty($_POST['auto_save']),
+            'delete_data_on_uninstall' => ! empty($_POST['delete_data_on_uninstall']),
         ];
 
         if (isset($_POST['default_delivery_slot_title'])) {
@@ -80,6 +81,9 @@ class Ajax
                 ? max(1, absint($data['stale_hold_hours']))
                 : $current['stale_hold_hours'],
             'auto_save' => array_key_exists('auto_save', $data) ? (bool) $data['auto_save'] : $current['auto_save'],
+            'delete_data_on_uninstall' => array_key_exists('delete_data_on_uninstall', $data)
+                ? (bool) $data['delete_data_on_uninstall']
+                : $current['delete_data_on_uninstall'],
         ];
 
         update_option('dsw_settings', $sanitized);
@@ -114,7 +118,7 @@ class Ajax
 
         if (in_array($scope, ['everything', 'slots'], true)) {
             $payload['slots'] = $wpdb->get_results(
-                'SELECT slot_date, start_time, end_time, capacity, price, status FROM ' . SlotManager::slots_table(),
+                'SELECT slot_date, start_time, end_time, capacity, price, status FROM ' . SlotManager::slots_table(), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- no user input; table name only, from SlotManager (not a placeholder value).
                 ARRAY_A
             ) ?: [];
         }
@@ -123,7 +127,7 @@ class Ajax
             // Read-only: order_id links are specific to this site's WooCommerce
             // orders and are never restored by import (see import_settings()).
             $payload['bookings'] = $wpdb->get_results(
-                'SELECT slot_id, order_id, status, created_at FROM ' . SlotManager::bookings_table(),
+                'SELECT slot_id, order_id, status, created_at FROM ' . SlotManager::bookings_table(), // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- no user input; table name only, from SlotManager (not a placeholder value).
                 ARRAY_A
             ) ?: [];
         }

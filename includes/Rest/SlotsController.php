@@ -35,6 +35,19 @@ class SlotsController
             ],
         ]);
 
+        register_rest_route(self::NAMESPACE_, '/slots/check-conflict', [
+            [
+                'methods'             => \WP_REST_Server::READABLE,
+                'callback'            => [$this, 'check_conflict'],
+                'permission_callback' => [$this, 'check_permission'],
+                'args'                => [
+                    'slot_date'  => ['type' => 'string', 'required' => true],
+                    'start_time' => ['type' => 'string', 'required' => true],
+                    'exclude_id' => ['type' => 'integer', 'required' => false],
+                ],
+            ],
+        ]);
+
         register_rest_route(self::NAMESPACE_, '/slots', [
             [
                 'methods'             => \WP_REST_Server::READABLE,
@@ -162,6 +175,32 @@ class SlotsController
             'total_capacity' => (int) ($row['total_capacity'] ?? 0),
             'total_booked'   => (int) ($row['total_booked'] ?? 0),
         ]);
+    }
+
+    /**
+     * GET /slots/check-conflict — whether a slot already exists for this
+     * exact date + start time (used before creating/editing a slot).
+     */
+    public function check_conflict(\WP_REST_Request $request)
+    {
+        global $wpdb;
+
+        $table      = $this->table();
+        $slot_date  = $request->get_param('slot_date');
+        $start_time = $request->get_param('start_time');
+        $exclude_id = (int) $request->get_param('exclude_id');
+
+        $sql    = "SELECT COUNT(*) FROM {$table} WHERE slot_date = %s AND start_time = %s";
+        $values = [$slot_date, $start_time];
+
+        if ($exclude_id) {
+            $sql     .= ' AND id != %d';
+            $values[] = $exclude_id;
+        }
+
+        $count = (int) $wpdb->get_var($wpdb->prepare($sql, $values));
+
+        return rest_ensure_response(['conflict' => $count > 0]);
     }
 
     /**

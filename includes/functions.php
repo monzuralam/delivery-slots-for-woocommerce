@@ -20,6 +20,7 @@ function dsw_get_settings($key = null, $default = null) {
         'delivery_time_title'         => 'Delivery time',
         'stale_hold_hours'            => 6,
         'auto_save'                   => false,
+        'delete_data_on_uninstall'    => false,
     ];
 
     $stored = get_option('dsw_settings', []);

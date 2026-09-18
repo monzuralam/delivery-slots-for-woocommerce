@@ -122,6 +122,22 @@ function Tools() {
                         onChange={handleFileChange}
                     />
                 </div>
+
+                <div className="dsw-settings-field dsw-settings-field--toggle">
+                    <div>
+                        <label htmlFor="dsw-delete-on-uninstall">Delete data on uninstall</label>
+                        <p>Permanently remove all delivery slots, bookings, and settings when this plugin is deleted. Off by default.</p>
+                    </div>
+                    <label className="dsw-switch">
+                        <input
+                            id="dsw-delete-on-uninstall"
+                            type="checkbox"
+                            checked={Boolean(settings.delete_data_on_uninstall)}
+                            onChange={(e) => updateField('delete_data_on_uninstall', e.target.checked)}
+                        />
+                        <span className="dsw-switch__track" />
+                    </label>
+                </div>
             </div>
         </div>
     );

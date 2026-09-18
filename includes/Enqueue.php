@@ -163,7 +163,11 @@ class Enqueue {
         if ('delivery-slots-for-woocommerce_page_delivery-slots-for-woocommerce-getting-started' === $hook) {
             $data['slotCount']    = $this->get_slot_count();
             $data['checkoutType'] = $this->get_checkout_type();
-
+			$data['githubUrl']     = 'https://github.com/delivery-slots-for-woocommerce/delivery-slots-for-woocommerce';
+			$data['docsUrl']       = '#';
+			$data['issuesUrl']     = 'https://github.com/delivery-slots-for-woocommerce/delivery-slots-for-woocommerce/issues';
+			$data['contactEmail']  = 'monzur484[at]gmail[dot]com';
+			$data['communityUrl']  = 'https://facebook.com/#';
             return $data;
         }
 
@@ -176,7 +180,9 @@ class Enqueue {
     private function get_slot_count() {
         global $wpdb;
 
-        return (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . SlotManager::slots_table());
+		$table = SlotManager::slots_table();
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM `{$table}`" );
     }
 
     /**

@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { BookOpen, CalendarClock, HelpCircle, LifeBuoy, ScrollText } from 'lucide-react';
+import { BookOpen, CalendarClock, HelpCircle, Home as HomeIcon, LifeBuoy, ScrollText } from 'lucide-react';
 
 import Home from './components/Home';
 import HowToUse from './components/HowToUse';
 import Faq from './components/Faq';
 import Changelog from './components/Changelog';
 import Help from './components/Help';
-import { GITHUB_URL } from './links';
 
 const TABS = [
-    { id: 'home', label: 'Home', icon: BookOpen },
+    { id: 'home', label: 'Home', icon: HomeIcon },
     { id: 'basic-use', label: 'Basic Use', icon: BookOpen },
     { id: 'faq', label: 'FAQ', icon: HelpCircle },
     { id: 'changelog', label: 'Changelog', icon: ScrollText },
@@ -29,19 +28,19 @@ function App() {
             <div className="dsw-gs-hero">
                 <a
                     className="dsw-gs-hero__support"
-                    href={GITHUB_URL}
+                    href={dsw.githubUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                 >
                     <LifeBuoy size={15} />
-                    Support
+                    {wp.i18n.__('Support', 'delivery-slots-for-woocommerce')}
                 </a>
 
                 <div className="dsw-gs-hero__brand">
                     <span className="dsw-gs-hero__logo">
                         <CalendarClock size={24} />
                     </span>
-                    Delivery Slots for WooCommerce
+                    {wp.i18n.__('Delivery Slots for WooCommerce', 'delivery-slots-for-woocommerce')}
                 </div>
 
                 <p className="dsw-gs-hero__tagline">

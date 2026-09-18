@@ -10,19 +10,8 @@ class Enqueue {
      * Constructor
      */
     public function __construct() {
-        // Frontend scripts
-        add_action('wp_enqueue_scripts', array($this, 'frontend_scripts'));
-
         // Admin scripts
         add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
-    }
-
-    /**
-     * Frontend Assets
-     * @since 1.0.0
-     */
-    public function frontend_scripts() {
-        wp_register_script('dsw-frontend', DSW_URL . '/assets/build/frontend.js', array('jquery'), DSW_VERSION, true);
     }
 
     /**

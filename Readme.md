@@ -75,6 +75,8 @@ Because classic and block checkout fire different "order processed" hooks (`wooc
 
 Capacity is released the same way it's taken — through `SlotManager::release_slot()` — on cancellation, failure, refund, trash/delete, or an hourly cron sweep for orders left unpaid past the configurable stale-hold window (Settings > General).
 
+Restoring a trashed order (`OrderHooks::handle_restored()`, hooked to `woocommerce_untrash_order`) attempts to re-reserve the same slot via `SlotManager::reserve_slot()` if the order comes back into a holding status. This can fail if the slot filled up (or was closed) while the order sat in the trash — in that case the restore itself still succeeds, but an order note is added ("please assign a new slot") instead of silently leaving the order without one.
+
 ## Database Structure
 
 Created directly in `Install.php::create_tables()` on activation (`ENGINE=InnoDB`, not `dbDelta()` — see [above](#technical-decision-preventing-overbooked-slots)). All reads/writes go through `SlotManager`.
@@ -108,6 +110,17 @@ Created directly in `Install.php::create_tables()` on activation (`ENGINE=InnoDB
 The `order_id` unique key is what makes `SlotManager::reserve_slot()` idempotent for a given order (re-processing the same order updates its existing booking row instead of creating a duplicate).
 
 **Plugin settings** live outside these tables, in a single `dsw_settings` option (`wp_options`), read via `dsw_get_settings()` (`includes/functions.php`) — see [Architecture](#architecture).
+
+## Security
+
+- **Capability checks** — every admin-only entry point (the `SlotsController` REST routes and the Settings `Ajax` handlers) requires `current_user_can('manage_options')`. The one public REST route, `GET /dsw/v1/slots/available`, is intentionally read-only and returns nothing beyond slot date/time/price/remaining-capacity — no order, customer, or booking data.
+- **Nonces, scoped per purpose** — the admin REST calls use the standard `wp_rest` nonce; the Settings page's save/export/import AJAX actions use their own `dsw_settings` nonce; the checkout picker's AJAX selection endpoint uses its own `dsw_select_slot` nonce. None of these are interchangeable — a nonce for one purpose is rejected by the others.
+- **Input handling** — REST route args declare `sanitize_callback`/`validate_callback` (e.g. slot dates are regex-validated, capacity/price are cast with `absint()`/`(float)`), and `$_POST`/`$_GET` values are run through `wp_unslash()` + `sanitize_text_field()`/`sanitize_key()`/`absint()` before use.
+- **SQL** — every query that includes a user-supplied value uses `$wpdb->prepare()` with placeholders (slot CRUD, the availability endpoint, the duplicate-slot conflict check). The few queries built with a dynamic table name (from `SlotManager::slots_table()`/`bookings_table()`, never user input) either escape it with `esc_sql()` plus backticks (`uninstall.php`) or are marked `// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared` with the reason, since identifiers can't go through a `%s`/`%d` placeholder.
+- **Output escaping** — `esc_html()`/`esc_html__()`/`esc_attr()`/`esc_url_raw()` wrap dynamic values wherever they're echoed into HTML or attributes, including error messages passed into thrown exceptions (`esc_html($result->get_error_message())` in `Checkout.php`).
+- **No trusted client input for the actual booking decision** — the public availability endpoint and the client-side pickers are purely informational; capacity is only ever reserved through `SlotManager::reserve_slot()`, re-verified server-side at order-processing time regardless of what the client last displayed.
+- **Direct file access is blocked** — every PHP file starts with `if (! defined('ABSPATH')) exit;`, and `uninstall.php` additionally requires `defined('WP_UNINSTALL_PLUGIN')`.
+- **Uninstall is non-destructive by default** — dropping the plugin's tables and options only happens if "Delete data on uninstall" (Settings > Tools) has been explicitly turned on; the default is off.
 
 ## Getting Started
 

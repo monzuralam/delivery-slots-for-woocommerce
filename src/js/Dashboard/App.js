@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Loader2 } from 'lucide-react';
 
 import { createSlot, deleteSlot, fetchSlotOrders, fetchSlots, fetchStats, updateSlot } from './api';
 import { confirmDelete, notifyError, notifySuccess, openSlotForm, showSlotOrders } from './swal';
@@ -8,6 +7,7 @@ import StatsCards from './components/StatsCards';
 import Toolbar from './components/Toolbar';
 import SlotsTable from './components/SlotsTable';
 import Pagination from './components/Pagination';
+import { SkeletonStatsCards, SkeletonToolbar, SkeletonTableRows } from './components/Skeleton';
 
 const PER_PAGE = 10;
 
@@ -137,38 +137,44 @@ function App() {
         <div className="dsw-app">
             <Header onAdd={handleAddClick} />
 
-            {initializing ? (
-                <div className="dsw-app__loading-page">
-                    <Loader2 size={18} />
-                    Loading dashboard…
-                </div>
-            ) : (
-                <>
-                    <StatsCards stats={stats} />
+            <div className="dsw-content">
+                {initializing ? (
+                    <>
+                        <SkeletonStatsCards />
 
-                    <div className="dsw-panel">
-                        <Toolbar
-                            search={search}
-                            onSearchChange={setSearch}
-                            status={status}
-                            onStatusChange={setStatus}
-                            onRefresh={handleRefresh}
-                            refreshing={loading}
-                        />
+                        <div className="dsw-panel">
+                            <SkeletonToolbar />
+                            <SkeletonTableRows />
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        <StatsCards stats={stats} />
 
-                        <SlotsTable
-                            slots={slots}
-                            loading={loading}
-                            onAdd={handleAddClick}
-                            onEdit={handleEditClick}
-                            onDelete={handleDeleteClick}
-                            onViewOrders={handleViewOrders}
-                        />
+                        <div className="dsw-panel">
+                            <Toolbar
+                                search={search}
+                                onSearchChange={setSearch}
+                                status={status}
+                                onStatusChange={setStatus}
+                                onRefresh={handleRefresh}
+                                refreshing={loading}
+                            />
 
-                        <Pagination page={page} totalPages={totalPages} total={total} onChange={setPage} />
-                    </div>
-                </>
-            )}
+                            <SlotsTable
+                                slots={slots}
+                                loading={loading}
+                                onAdd={handleAddClick}
+                                onEdit={handleEditClick}
+                                onDelete={handleDeleteClick}
+                                onViewOrders={handleViewOrders}
+                            />
+
+                            <Pagination page={page} totalPages={totalPages} total={total} onChange={setPage} />
+                        </div>
+                    </>
+                )}
+            </div>
         </div>
     );
 }

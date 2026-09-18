@@ -1,5 +1,6 @@
-import { CalendarOff, ClipboardList, Clock, Loader2, Pencil, Plus, Trash2, Users } from 'lucide-react';
+import { CalendarOff, ClipboardList, Clock, Pencil, Plus, Trash2, Users } from 'lucide-react';
 import StatusBadge from './StatusBadge';
+import { SkeletonTableRows } from './Skeleton';
 
 function formatDate(value) {
     const date = new Date(`${value}T00:00:00`);
@@ -17,12 +18,7 @@ function formatPrice(value) {
 
 function SlotsTable({ slots, loading, onEdit, onDelete, onAdd, onViewOrders }) {
     if (loading) {
-        return (
-            <div className="dsw-table-loading">
-                <Loader2 size={18} />
-                Loading slots…
-            </div>
-        );
+        return <SkeletonTableRows rows={Math.min(slots.length, 5) || 5} />;
     }
 
     if (!slots.length) {

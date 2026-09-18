@@ -55,25 +55,37 @@ class Checkout
         add_action('woocommerce_store_api_checkout_order_processed', [$this, 'reserve_on_store_api_order_processed']);
     }
 
+    /**
+     * Whether the feature is turned on (Settings > General > Enable delivery slots).
+     */
+    private function is_enabled()
+    {
+        return (bool) dsw_get_settings('enable_dsw', true);
+    }
+
     /* -----------------------------------------------------------------
      * Rendering
      * ------------------------------------------------------------- */
 
     public function render_classic_field($checkout)
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         echo '<div id="dsw-delivery-slot" class="dsw-delivery-slot">';
-        echo '<h3>' . esc_html__('Delivery date & time', 'delivery-slots-for-woocommerce') . '</h3>';
+        echo '<h3>' . esc_html(dsw_get_settings('default_delivery_slot_title', __('Delivery date & time', 'delivery-slots-for-woocommerce'))) . '</h3>';
         echo '<div class="dsw-slot-fields">';
 
         echo '<p class="form-row dsw-slot-field">';
-        echo '<label for="dsw_delivery_date">' . esc_html__('Delivery date', 'delivery-slots-for-woocommerce') . ' <span class="required">*</span></label>';
+        echo '<label for="dsw_delivery_date">' . esc_html(dsw_get_settings('delivery_date_title', __('Delivery date', 'delivery-slots-for-woocommerce'))) . ' <span class="required">*</span></label>';
         echo '<select id="dsw_delivery_date" class="dsw-slot-select" required>';
         echo '<option value="">' . esc_html__('Loading available dates…', 'delivery-slots-for-woocommerce') . '</option>';
         echo '</select>';
         echo '</p>';
 
         echo '<p class="form-row dsw-slot-field">';
-        echo '<label for="dsw_delivery_slot_id">' . esc_html__('Delivery time', 'delivery-slots-for-woocommerce') . ' <span class="required">*</span></label>';
+        echo '<label for="dsw_delivery_slot_id">' . esc_html(dsw_get_settings('delivery_time_title', __('Delivery time', 'delivery-slots-for-woocommerce'))) . ' <span class="required">*</span></label>';
         echo '<select name="' . esc_attr(self::POST_FIELD) . '" id="dsw_delivery_slot_id" class="dsw-slot-select" required disabled>';
         echo '<option value="">' . esc_html__('Select a date first', 'delivery-slots-for-woocommerce') . '</option>';
         echo '</select>';
@@ -86,6 +98,10 @@ class Checkout
 
     public function validate_classic_field()
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! isset($_POST['woocommerce_checkout_place_order']) && ! isset($_POST[self::POST_FIELD])) {
             return;
         }
@@ -103,6 +119,10 @@ class Checkout
 
     public function apply_slot_fee($cart)
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (is_admin() && ! defined('DOING_AJAX')) {
             return;
         }
@@ -147,6 +167,10 @@ class Checkout
     {
         check_ajax_referer(self::NONCE_ACTION, 'nonce');
 
+        if (! $this->is_enabled()) {
+            wp_send_json_error(['message' => __('Delivery slots are currently disabled.', 'delivery-slots-for-woocommerce')]);
+        }
+
         $slot_id = isset($_POST['slot_id']) ? absint(wp_unslash($_POST['slot_id'])) : 0;
 
         // A falsy slot id means "clear the current selection" (e.g. the
@@ -187,6 +211,10 @@ class Checkout
 
     public function enqueue_assets()
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! function_exists('is_checkout') || ! is_checkout()) {
             return;
         }
@@ -218,6 +246,10 @@ class Checkout
 
     public function register_blocks_integration()
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! interface_exists(\Automattic\WooCommerce\Blocks\Integrations\IntegrationInterface::class)) {
             return;
         }
@@ -236,6 +268,10 @@ class Checkout
      */
     public function register_cart_update_callback()
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! function_exists('woocommerce_store_api_register_update_callback')) {
             return;
         }
@@ -291,6 +327,10 @@ class Checkout
 
     public function reserve_on_order_processed($order_id, $posted_data, $order)
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! $order instanceof \WC_Order) {
             $order = wc_get_order($order_id);
         }
@@ -319,6 +359,10 @@ class Checkout
      */
     public function reserve_on_store_api_order_processed($order)
     {
+        if (! $this->is_enabled()) {
+            return;
+        }
+
         if (! $order instanceof \WC_Order) {
             return;
         }

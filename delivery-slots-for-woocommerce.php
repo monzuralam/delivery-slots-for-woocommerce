@@ -187,10 +187,6 @@ final class Delivery_Slots_For_WooCommerce
             new DSW\Admin();
         }
 
-        if(! is_admin() ) {
-            new DSW\Frontend\Shortcode();
-        }
-
         new DSW\Enqueue();
         new DSW\Hooks();
         new DSW\Rest\SlotsController();

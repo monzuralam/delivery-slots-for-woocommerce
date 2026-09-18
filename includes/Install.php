@@ -107,5 +107,14 @@ class Install
         if (! get_option('dsw_install_time')) {
             update_option('dsw_install_time', current_time('mysql'));
         }
+
+		if ( ! get_option('dsw_settings')) {
+			$default_settings = [
+				'enable_dsw' 			=> true,
+				'default_delivery_slot_title' => 'Delivery date & time',
+			];
+
+			update_option('dsw_settings', $default_settings);
+		}
     }
 }

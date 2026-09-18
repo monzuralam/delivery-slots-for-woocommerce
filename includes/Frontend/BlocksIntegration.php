@@ -39,6 +39,9 @@ class BlocksIntegration implements IntegrationInterface
             'namespace'    => 'dsw',
             'pollSeconds'  => 20,
             'selectedSlot' => WC()->session ? absint(WC()->session->get(Checkout::SESSION_KEY)) : 0,
+            'title'        => dsw_get_settings('default_delivery_slot_title', 'Delivery date & time'),
+            'dateTitle'    => dsw_get_settings('delivery_date_title', 'Delivery date'),
+            'timeTitle'    => dsw_get_settings('delivery_time_title', 'Delivery time'),
         ]);
     }
 

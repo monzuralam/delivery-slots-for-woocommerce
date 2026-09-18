@@ -255,4 +255,56 @@ class SlotManager
 
         return $result;
     }
+
+    /* -----------------------------------------------------------------
+     * Import/export (Settings > Tools)
+     * ------------------------------------------------------------- */
+
+    /**
+     * Replace slot definitions from an import file: deletes existing slots
+     * that have no active bookings, then inserts the given rows fresh with
+     * booked reset to 0. Slots with bookings are left untouched.
+     *
+     * @param array $rows Each row: slot_date, start_time, end_time, capacity, price, status.
+     * @return array{imported:int,skipped_with_bookings:int}
+     */
+    public static function replace_slots($rows)
+    {
+        global $wpdb;
+
+        $table    = self::slots_table();
+        $statuses = ['active', 'inactive', 'full', 'closed'];
+
+        $skipped = (int) $wpdb->get_var("SELECT COUNT(*) FROM {$table} WHERE booked > 0");
+
+        $wpdb->query("DELETE FROM {$table} WHERE booked = 0");
+
+        $imported = 0;
+
+        foreach ((array) $rows as $row) {
+            if (empty($row['slot_date']) || empty($row['start_time']) || empty($row['end_time'])) {
+                continue;
+            }
+
+            $inserted = $wpdb->insert(
+                $table,
+                [
+                    'slot_date'  => sanitize_text_field($row['slot_date']),
+                    'start_time' => sanitize_text_field($row['start_time']),
+                    'end_time'   => sanitize_text_field($row['end_time']),
+                    'capacity'   => absint($row['capacity'] ?? 0),
+                    'booked'     => 0,
+                    'price'      => (float) ($row['price'] ?? 0),
+                    'status'     => in_array($row['status'] ?? '', $statuses, true) ? $row['status'] : 'active',
+                ],
+                ['%s', '%s', '%s', '%d', '%d', '%f', '%s']
+            );
+
+            if (false !== $inserted) {
+                $imported++;
+            }
+        }
+
+        return ['imported' => $imported, 'skipped_with_bookings' => $skipped];
+    }
 }

@@ -1,8 +1,8 @@
 const getConfig = () => {
-    const config = typeof window !== 'undefined' && window.dswAdmin;
+    const config = typeof window !== 'undefined' && window.dsw;
 
     if (!config) {
-        throw new Error('Delivery Slots: REST configuration (window.dswAdmin) is missing.');
+        throw new Error('Delivery Slots: REST configuration (window.dsw) is missing.');
     }
 
     return config;

@@ -15,9 +15,6 @@ if (! defined('ABSPATH')) exit;
  */
 class Cron
 {
-    /** Release a pending order's slot after this many hours with no payment. */
-    const STALE_HOURS = 6;
-
     public function __construct()
     {
         add_action('dsw_cleanup_stale_holds', [$this, 'release_stale_pending_orders']);
@@ -26,7 +23,8 @@ class Cron
 
     public function release_stale_pending_orders()
     {
-        $cutoff = gmdate('Y-m-d H:i:s', time() - (self::STALE_HOURS * HOUR_IN_SECONDS));
+        $stale_hours = dsw_get_settings('stale_hold_hours', 6);
+        $cutoff      = gmdate('Y-m-d H:i:s', time() - ($stale_hours * HOUR_IN_SECONDS));
 
         $order_ids = wc_get_orders([
             'status'       => ['pending'],

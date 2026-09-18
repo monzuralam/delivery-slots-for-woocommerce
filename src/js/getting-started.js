@@ -1,9 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import App from './Admin/App'
-import './Admin/dashboard.scss'
+import App from './GettingStarted/App'
 
-const element = document.getElementById('dsw-app');
+const element = document.getElementById('dsw-getting-started');
 
 if (element) {
   ReactDOM.createRoot(element).render(

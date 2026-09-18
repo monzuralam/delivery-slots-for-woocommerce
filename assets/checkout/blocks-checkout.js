@@ -216,14 +216,14 @@
 		var content = el(
 			'div',
 			{ className: 'dsw-delivery-slot dsw-blocks-slot-field' },
-			el( 'h3', null, __( 'Delivery date & time', 'delivery-slots-for-woocommerce' ) ),
+			el( 'h3', null, settings.title || __( 'Delivery date & time', 'delivery-slots-for-woocommerce' ) ),
 			el(
 				'div',
 				{ className: 'dsw-blocks-slot-row' },
 				el(
 					'div',
 					{ className: 'dsw-blocks-slot-col' },
-					el( 'label', { htmlFor: 'dsw-blocks-date-select' }, __( 'Delivery date', 'delivery-slots-for-woocommerce' ) ),
+					el( 'label', { htmlFor: 'dsw-blocks-date-select' }, settings.dateTitle || __( 'Delivery date', 'delivery-slots-for-woocommerce' ) ),
 					el(
 						'select',
 						{ id: 'dsw-blocks-date-select', value: selectedDate, onChange: onDateChange, required: true },
@@ -234,7 +234,7 @@
 				el(
 					'div',
 					{ className: 'dsw-blocks-slot-col' },
-					el( 'label', { htmlFor: 'dsw-blocks-slot-select' }, __( 'Delivery time', 'delivery-slots-for-woocommerce' ) ),
+					el( 'label', { htmlFor: 'dsw-blocks-slot-select' }, settings.timeTitle || __( 'Delivery time', 'delivery-slots-for-woocommerce' ) ),
 					el(
 						'select',
 						{

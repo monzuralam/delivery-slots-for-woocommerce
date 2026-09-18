@@ -27,7 +27,8 @@
   "license": "GPL-2.0-only",
   "devDependencies": {
     "@babel/runtime": "^8.0.5",
-    "@wordpress/scripts": "^28.5.0"
+    "@wordpress/scripts": "^28.5.0",
+    "webpack-remove-empty-scripts": "^1.1.1"
   },
   "dependencies": {
     "@wordpress/element": "^6.5.0",
